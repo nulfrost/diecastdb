@@ -1,0 +1,20 @@
+{
+  "name": "@hotwheels-api/scraper",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint ."
+  },
+  "dependencies": {
+    "axios": "^1.9.0",
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "@hotwheels-api/oxlint-config": "workspace:*",
+    "@hotwheels-api/typescript-config": "workspace:*",
+    "@types/axios": "^0.14.4",
+    "@types/cheerio": "^1.0.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}

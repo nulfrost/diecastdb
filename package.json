@@ -1,0 +1,31 @@
+{
+  "name": "hotweels-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "pnpm --filter backend dev",
+    "lint": "pnpm --filter={./apps/*} lint"
+  },
+  "keywords": [
+    "hotwheels",
+    "api",
+    "typescript"
+  ],
+  "author": "Dane Miller <khadane.miller@gmail.com>",
+  "license": "ISC",
+  "description": "",
+  "packageManager": "pnpm@10.10.0",
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "devDependencies": {
+    "@hotwheels-api/oxlint-config": "workspace:*",
+    "oxlint": "^1.0.0",
+    "typescript": "^5.8.3"
+  }
+}

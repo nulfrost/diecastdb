@@ -1,0 +1,18 @@
+{
+  "name": "@hotwheels-api/backend",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy --minify",
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "lint": "oxlint ."
+  },
+  "dependencies": {
+    "hono": "^4.7.11"
+  },
+  "devDependencies": {
+    "@hotwheels-api/oxlint-config": "workspace:*",
+    "@hotwheels-api/typescript-config": "workspace:*",
+    "typescript": "^5.8.3",
+    "wrangler": "^4.4.0"
+  }
+}
