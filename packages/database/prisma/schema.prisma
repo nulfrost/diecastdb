@@ -1,0 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Hotwheel {
+  id           Int        @id @default(autoincrement())
+  name         String
+  image_url    String?
+  year         String?
+  series       String?
+  designers    Designer[]
+  model_number String?
+}
+
+model Designer {
+  id         String    @id @default(uuid())
+  name       String
+  Hotwheel   Hotwheel? @relation(fields: [hotwheelId], references: [id])
+  hotwheelId Int?
+}

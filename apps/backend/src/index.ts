@@ -16,4 +16,8 @@ app.get("/", (c) => {
   `)
 });
 
+app.get("/healthcheck", (c) => {
+  return c.json({ message: "OK", status: 200 })
+})
+
 export default app;

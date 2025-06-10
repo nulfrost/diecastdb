@@ -9,7 +9,11 @@
   ],
   "scripts": {
     "dev:api": "pnpm --filter backend dev",
-    "lint": "pnpm --filter={./apps/*} lint"
+    "scrape": "pnpm --filter scraper scrape",
+    "lint": "pnpm --filter={./apps/*} lint",
+    "db:generate": "pnpm --filter database generate",
+    "db:migrate": "pnpm --filter database migrate",
+    "db:push": "pnpm --filter database push"
   },
   "keywords": [
     "hotwheels",
