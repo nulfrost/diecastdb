@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "dev:api": "pnpm --filter backend dev",
-    "scrape": "pnpm --filter scraper scrape",
+    "scrape:hotwheels": "pnpm --filter scraper scrape-hotwheels",
+    "scrape:designers": "pnpm --filter scraper scrape-designers",
     "lint": "pnpm --filter={./apps/*} lint",
     "db:generate": "pnpm --filter database generate",
     "db:migrate": "pnpm --filter database migrate",
@@ -23,12 +24,13 @@
   "author": "Dane Miller <khadane.miller@gmail.com>",
   "license": "ISC",
   "description": "",
-  "packageManager": "pnpm@10.10.0",
+  "packageManager": "pnpm@10.12.1",
   "engines": {
     "node": ">=22.16.0"
   },
   "devDependencies": {
     "@hotwheels-api/oxlint-config": "workspace:*",
+    "@hotwheels-api/database": "workspace:*",
     "oxlint": "^1.0.0",
     "typescript": "^5.8.3"
   }

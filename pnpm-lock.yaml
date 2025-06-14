@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@hotwheels-api/database':
+        specifier: workspace:*
+        version: link:packages/database
       '@hotwheels-api/oxlint-config':
         specifier: workspace:*
         version: link:packages/oxlint-config
@@ -46,6 +49,9 @@ importers:
         specifier: ^1.0.0
         version: 1.1.0
     devDependencies:
+      '@hotwheels-api/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@hotwheels-api/oxlint-config':
         specifier: workspace:*
         version: link:../../packages/oxlint-config
@@ -77,9 +83,18 @@ importers:
         specifier: ^6.9.0
         version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
     devDependencies:
+      '@hotwheels-api/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
       prisma:
         specifier: ^6.9.0
         version: 6.9.0(typescript@5.8.3)
+      tsx:
+        specifier: ^4.19.4
+        version: 4.19.4
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
 
   packages/oxlint-config:
     devDependencies:
