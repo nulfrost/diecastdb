@@ -23,6 +23,12 @@ importers:
 
   apps/backend:
     dependencies:
+      '@prisma/adapter-d1':
+        specifier: ^6.9.0
+        version: 6.9.0
+      '@prisma/client':
+        specifier: ^6.9.0
+        version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
       hono:
         specifier: ^4.7.11
         version: 4.7.11
@@ -33,6 +39,9 @@ importers:
       '@hotwheels-api/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+      '@types/node':
+        specifier: ^24.0.0
+        version: 24.0.0
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -82,6 +91,9 @@ importers:
       '@prisma/client':
         specifier: ^6.9.0
         version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
+      db:
+        specifier: link:generated/prisma
+        version: link:generated/prisma
     devDependencies:
       '@hotwheels-api/typescript-config':
         specifier: workspace:*

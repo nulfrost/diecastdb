@@ -1,20 +1,30 @@
 import { Hono } from "hono";
+import prismaClient from "../lib/prisma"
 
-const app = new Hono();
+type Bindings = {
+  DB: D1Database
+}
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.get("/", (c) => {
   return c.text(`
   < Hotwheels API >
 
-  Version: 0.1
-
   API Routes: /hotwheels, /hotwheels/{id}
 
   Code: https://github.com/nulfrost/hotwheels-api
 
-  Last Updated: ${new Date().toLocaleString()}
   `)
 });
+
+app.get("/hotwheels", async (c) => {
+  const prisma = await prismaClient.fetch(c.env.DB)
+
+  const hotwheels = await prisma.hotwheel.findMany()
+
+  return c.json(hotwheels)
+})
 
 app.get("/healthcheck", (c) => {
   return c.json({ message: "OK", status: 200 })

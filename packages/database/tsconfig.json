@@ -5,8 +5,8 @@
     "lib": [
       "ES2016"
     ],
-    "module": "NodeNext",
-    "moduleResolution": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
