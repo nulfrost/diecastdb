@@ -17,16 +17,18 @@ model Hotwheel {
   image_url    String?
   year         String?
   series       String?
-  designers    Designer[]
   model_number String?
+  designers    Designer[] @relation("HotwheelDesigners")
+
+  @@map("hotwheels")
 }
 
 model Designer {
-  id          Int     @id @default(autoincrement())
-  name        String
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
   title       String
   description String?
+  hotwheels   Hotwheel[] @relation("HotwheelDesigners")
 
-  Hotwheel   Hotwheel? @relation(fields: [hotwheelId], references: [id])
-  hotwheelId Int?
+  @@map("designers")
 }

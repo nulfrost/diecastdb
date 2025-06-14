@@ -2,8 +2,8 @@
 
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import fs from 'node:fs';
 import { URL } from 'node:url';
+import { prisma } from "@hotwheels-api/database"
 
 const BASE_URL = 'https://hotwheels.fandom.com';
 const START_URL = `${BASE_URL}/wiki/Hot_Wheels`;
@@ -17,7 +17,7 @@ interface YearLink {
 
 interface Car {
   name: string;
-  imageUrl: string | null;
+  image_url: string | null;
   year: string | null;
   series: string | null;
   designers: string[];
@@ -33,11 +33,11 @@ async function fetchWithRetry(url: string, retries: number = 3, delay: number = 
     try {
       return await axios.get(url);
     } catch (error: unknown) {
-     if (error instanceof Error) {
-       if (attempt === retries) throw error;
-       console.warn(`Retrying (${attempt}/${retries}) after error: ${error.message}`);
-       await new Promise(res => setTimeout(res, delay));
-     }
+      if (error instanceof Error) {
+        if (attempt === retries) throw error;
+        console.warn(`Retrying (${attempt}/${retries}) after error: ${error.message}`);
+        await new Promise(res => setTimeout(res, delay));
+      }
     }
   }
 }
@@ -74,7 +74,7 @@ async function scrapeCarDetailPage(url: string): Promise<Car> {
   const infobox = $('.portable-infobox');
 
   const name = infobox.find('h2.pi-item').text().trim() || $('h1.page-header__title').text().trim();
-  const imageUrl = infobox.find('figure img').attr('src') || null;
+  const image_url = infobox.find('figure img').attr('src') || null;
 
   let producedYear: string | null = null;
   infobox.find('.pi-item a[href*="/wiki/"]').each((i, el) => {
@@ -87,7 +87,7 @@ async function scrapeCarDetailPage(url: string): Promise<Car> {
 
   const fields: Car = {
     name,
-    imageUrl,
+    image_url,
     year: producedYear,
     series: null,
     designers: [],
@@ -144,6 +144,15 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
 
 (async () => {
   try {
+    await prisma.$queryRaw`UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='hotwheels'`
+    await prisma.hotwheel.deleteMany();
+
+    const designers = await prisma.designer.findMany()
+    if (designers.length === 0) {
+      throw new Error("!! PLEASE RUN THE DESIGNER SEED SCRIPT FIRST BEFORE THIS ONE: pnpm scrape:designers")
+    }
+
+
     const yearLinks = await getYearLinks(START_URL);
     const allCars: Car[] = [];
 
@@ -152,10 +161,51 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
       const cars = await scrapeHotWheelsList(year, url);
       allCars.push(...cars);
     }
+    for (const car of allCars) {
+      try {
+        const createdHotwheel = await prisma.hotwheel.create({
+          data: {
+            name: car.name,
+            image_url: car.image_url,
+            year: car.year,
+            series: car.series,
+            model_number: car.model_number,
+          },
+        });
 
-    fs.writeFileSync('hotwheels_all_years.json', JSON.stringify(allCars, null, 2));
+        const normalizedDesignerNames = car.designers.map(name => name.trim());
+
+        for (const name of normalizedDesignerNames) {
+          const designer = await prisma.designer.findUnique({
+            where: { name },
+          });
+
+          if (!designer) {
+            console.warn(`Designer not found in DB: ${name}`);
+            continue;
+          }
+
+          await prisma.designer.update({
+            where: { id: designer.id },
+            data: {
+              hotwheels: {
+                connect: { id: createdHotwheel.id },
+              },
+            },
+          });
+        }
+
+        console.log(`Inserted and linked hotwheel: ${car.name}`);
+      } catch (err: any) {
+        console.error(`Failed to insert ${car.name}: ${err.message}`);
+      }
+    }
+
+
     console.log(`Scraped a total of ${allCars.length} cars across all years.`);
   } catch (error) {
     console.error('Scraping failed:', error);
+  } finally {
+    await prisma.$disconnect()
   }
 })();

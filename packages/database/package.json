@@ -5,7 +5,8 @@
   "scripts": {
     "migrate": "prisma db migrate",
     "generate": "prisma generate",
-    "push": "prisma db push"
+    "push": "prisma db push",
+    "studio": "prisma studio"
   },
   "exports": {
     ".": "./src/index.ts"

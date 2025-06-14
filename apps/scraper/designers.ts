@@ -75,6 +75,8 @@ async function scrapeDesignerDetailPage(url: string): Promise<Designer> {
 
 (async () => {
   try {
+    await prisma.$queryRaw`UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='designers'`
+    await prisma.designer.deleteMany()
     const links = await getDesignerLinks(START_URL);
     const designers: Designer[] = [];
 
@@ -88,8 +90,6 @@ async function scrapeDesignerDetailPage(url: string): Promise<Designer> {
       }
     }
 
-    await prisma.designer.deleteMany()
-    // fs.writeFileSync('hotwheels_designers.json', JSON.stringify(designers, null, 2));
     const insertedDesigners = await prisma.designer.createManyAndReturn({
       data: designers
     })

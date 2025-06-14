@@ -2,16 +2,21 @@
   "extends": "@hotwheels-api/typescript-config/base.json",
   "compilerOptions": {
     "target": "es2016",
-       "lib": ["ES2016"],
-       "module": "CommonJS",
-       "moduleResolution": "node",
-       "esModuleInterop": true,
-       "forceConsistentCasingInFileNames": true,
-       "verbatimModuleSyntax": false,
-       "strict": true,
-       "skipDefaultLibCheck": true,
-       "skipLibCheck": false,
-       "declaration": true,
+    "lib": [
+      "ES2016"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": false,
+    "strict": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": false,
+    "declaration": true,
   },
-  "exclude": ["node_modules", "generated"]
+  "exclude": [
+    "node_modules",
+    "generated"
+  ]
 }

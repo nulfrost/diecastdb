@@ -14,7 +14,8 @@
     "lint": "pnpm --filter={./apps/*} lint",
     "db:generate": "pnpm --filter database generate",
     "db:migrate": "pnpm --filter database migrate",
-    "db:push": "pnpm --filter database push"
+    "db:push": "pnpm --filter database push",
+    "db:studio": "pnpm --filter database studio"
   },
   "keywords": [
     "hotwheels",
