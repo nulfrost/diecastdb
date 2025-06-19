@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "@hotwheels-api/typescript-config": "workspace:*",
+    "@types/node": "^24.0.0",
+    "drizzle-kit": "^0.31.1",
     "prisma": "^6.9.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
@@ -22,6 +24,7 @@
   "dependencies": {
     "@prisma/adapter-d1": "^6.9.0",
     "@prisma/client": "^6.9.0",
-    "db": "link:generated/prisma"
+    "db": "link:generated/prisma",
+    "drizzle-orm": "^0.44.2"
   }
 }
