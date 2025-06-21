@@ -26,7 +26,6 @@
       "binding": "DB",
       "database_name": "hotwheels-api-db",
       "database_id": "2bee2cd7-ef69-4049-9196-a2e3f9e175c8",
-      "migrations_dir": "../../packages/database/prisma/migrations"
     }
   ],
   // "ai": {

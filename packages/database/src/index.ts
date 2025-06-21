@@ -1,7 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
-import { PrismaD1 } from "@prisma/adapter-d1";
+import { drizzle } from "drizzle-orm/d1"
+import * as schema from "../src/drizzle/schema"
 
-const prisma = new PrismaClient();
-
-export { prisma, PrismaD1 };
-export * from "../generated/prisma";
+export { drizzle, schema }

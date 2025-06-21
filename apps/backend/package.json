@@ -1,12 +1,14 @@
 {
   "name": "@hotwheels-api/backend",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --remote",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "lint": "oxlint ."
   },
   "dependencies": {
+    "@prisma/adapter-d1": "^6.9.0",
+    "@prisma/client": "^6.9.0",
     "hono": "^4.7.11"
   },
   "devDependencies": {

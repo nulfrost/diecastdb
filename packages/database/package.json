@@ -4,11 +4,7 @@
   "type": "module",
   "scripts": {
     "migrate": "pnpm dlx wrangler d1 migrations create hotwheels-api-db",
-    "migrate:sql": "prisma migrate diff --from-empty --to-schema-datamodel ./prisma/schema.prisma --script",
-    "generate": "prisma generate",
-    "push": "prisma db push",
-    "remote": "pnpm dlx wrangler d1 migrations apply hotwheels-api-db --remote",
-    "studio": "prisma studio"
+    "remote": "pnpm dlx wrangler d1 migrations apply hotwheels-api-db --remote"
   },
   "exports": {
     ".": "./src/index.ts"
@@ -17,14 +13,11 @@
     "@hotwheels-api/typescript-config": "workspace:*",
     "@types/node": "^24.0.0",
     "drizzle-kit": "^0.31.1",
-    "prisma": "^6.9.0",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@prisma/adapter-d1": "^6.9.0",
-    "@prisma/client": "^6.9.0",
-    "db": "link:generated/prisma",
+    "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2"
   }
 }
