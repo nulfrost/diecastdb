@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { drizzle, schema } from "@hotwheels-api/database"
+import { drizzle, schema, clause } from "@hotwheels-api/database"
 
 type Bindings = {
   DB: D1Database;
@@ -19,23 +19,25 @@ app.get("/", (c) => {
 });
 
 app.get("/hotwheels", async (c) => {
-  // const { results } = await c.env.DB.prepare(
-  //   "SELECT * FROM hotwheels LIMIT 50",
-  // ).all();
-
   const db = drizzle(c.env.DB)
   const results = await db.select().from(schema.hotwheels).all()
 
-  return c.json(results);
+  return c.json({ data: results });
 });
 
 app.get("/hotwheels/:id", async (c) => {
   const { id } = c.req.param()
-  const { results } = await c.env.DB.prepare(
-    "SELECT * FROM hotwheels WHERE id = ? LIMIT 50",
-  ).bind(id).all()
-  return c.json(results)
+  const db = drizzle(c.env.DB, { schema });
+  const result = await db.query.hotwheels.findFirst({
+    where: clause.eq(schema.hotwheels.id, +id)
+  })
+  return c.json({ data: result })
 })
+
+// designers
+
+
+// desingers by id
 
 app.get("/healthcheck", (c) => {
   return c.json({ message: "OK", status: 200 });
