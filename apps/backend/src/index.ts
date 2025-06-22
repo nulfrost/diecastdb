@@ -6,6 +6,7 @@ import { secureHeaders } from "hono/secure-headers";
 import { queryParamValidator } from "./validator";
 import { loggerMiddleware } from "./middleware";
 import { requestId } from "hono/request-id";
+import { cache } from "hono/cache";
 
 type Bindings = {
   DB: D1Database;
@@ -28,6 +29,14 @@ app.get("/", (c) => {
 
   `);
 });
+
+app.get(
+  "*",
+  cache({
+    cacheName: "hotwheels-api",
+    cacheControl: "public, s-maxage=60",
+  }),
+);
 
 app.get("/hotwheels", queryParamValidator(), async (c) => {
   const { limit } = c.req.query();
