@@ -7,9 +7,11 @@
     "lint": "oxlint ."
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.0",
     "@prisma/adapter-d1": "^6.9.0",
     "@prisma/client": "^6.9.0",
-    "hono": "^4.7.11"
+    "hono": "^4.7.11",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@hotwheels-api/oxlint-config": "workspace:*",
