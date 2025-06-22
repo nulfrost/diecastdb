@@ -3,8 +3,9 @@ import { drizzle, schema, clause } from "@hotwheels-api/database";
 import { DEFAULT_LIMIT } from "./constants";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
-import { logger } from "./logger";
 import { queryParamValidator } from "./validator";
+import { loggerMiddleware } from "./middleware";
+import { requestId } from "hono/request-id";
 
 type Bindings = {
   DB: D1Database;
@@ -14,6 +15,8 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 app.use(cors({ origin: "*", allowMethods: ["GET", "OPTIONS"] }));
 app.use(secureHeaders());
+app.use("*", requestId());
+app.use(loggerMiddleware);
 
 app.get("/", (c) => {
   return c.text(`
@@ -33,7 +36,6 @@ app.get("/hotwheels", queryParamValidator(), async (c) => {
     limit: +limit || DEFAULT_LIMIT,
   });
 
-  logger.info(`Path: ${c.req.path}, Query: `);
   return c.json({ data: results });
 });
 
@@ -55,7 +57,7 @@ app.get("/designers", queryParamValidator(), async (c) => {
   return c.json({ data: result });
 });
 
-app.get("/designers/:id", async (c, next) => {
+app.get("/designers/:id", async (c) => {
   const { id } = c.req.param();
   const db = drizzle(c.env.DB, { schema });
   const result = await db.query.designers.findFirst({
