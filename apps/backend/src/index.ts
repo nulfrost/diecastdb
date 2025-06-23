@@ -6,7 +6,7 @@ import { secureHeaders } from "hono/secure-headers";
 import { queryParamValidator } from "./validator";
 import { loggerMiddleware } from "./middleware";
 import { requestId } from "hono/request-id";
-import { cache } from "hono/cache";
+// import { cache } from "hono/cache";
 import { cloudflareRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 type App = {
@@ -59,14 +59,14 @@ app.get("/", (c) => {
 
 hotwheelsApiV1.get(
 	"*",
-	cache({
-		cacheName: "hotwheels-api",
-		cacheControl: "public, s-maxage=3600",
-	}),
-	// async (c, next) => {
-	// 	c.header("Clear-Site-Data", `"cache"`);
-	// 	await next();
-	// },
+	// cache({
+	// 	cacheName: "hotwheels-api",
+	// 	cacheControl: "public, s-maxage=3600",
+	// }),
+	async (c, next) => {
+		c.header("Cache-Control", "no-cache");
+		await next();
+	},
 );
 
 hotwheelsApiV1.get("/hotwheels", queryParamValidator(), async (c) => {
