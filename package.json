@@ -1,35 +1,29 @@
 {
-  "name": "hotweels-api",
-  "private": true,
-  "version": "1.0.0",
-  "type": "module",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "scripts": {
-    "dev:api": "pnpm --filter backend dev",
-    "scrape:hotwheels": "pnpm --filter scraper scrape-hotwheels",
-    "scrape:designers": "pnpm --filter scraper scrape-designers",
-    "lint": "pnpm --filter={./apps/*} lint",
-    "db:push-remote": "pnpm --filter database remote"
-  },
-  "keywords": [
-    "hotwheels",
-    "api",
-    "typescript"
-  ],
-  "author": "Dane Miller <khadane.miller@gmail.com>",
-  "license": "ISC",
-  "description": "",
-  "packageManager": "pnpm@10.12.1",
-  "engines": {
-    "node": ">=22.16.0"
-  },
-  "devDependencies": {
-    "@hotwheels-api/oxlint-config": "workspace:*",
-    "@hotwheels-api/database": "workspace:*",
-    "oxlint": "^1.0.0",
-    "typescript": "^5.8.3"
-  }
+	"name": "diecastdb",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"workspaces": ["packages/*", "apps/*"],
+	"scripts": {
+		"dev:api": "pnpm --filter backend dev",
+		"scrape:hotwheels": "pnpm --filter scraper scrape-hotwheels",
+		"scrape:designers": "pnpm --filter scraper scrape-designers",
+		"lint": "pnpm --filter={./apps/*} lint",
+		"db:push": "pnpm --filter database push",
+		"deploy": "pnpm --filter backend deploy"
+	},
+	"keywords": ["hotwheels", "api", "typescript"],
+	"author": "Dane Miller <khadane.miller@gmail.com>",
+	"license": "MIT",
+	"description": "Public API for scraped data from the hotwheels wiki.",
+	"packageManager": "pnpm@10.12.1",
+	"engines": {
+		"node": ">=22.16.0"
+	},
+	"devDependencies": {
+		"@diecastdb/oxlint-config": "workspace:*",
+		"@diecastdb/database": "workspace:*",
+		"oxlint": "^1.0.0",
+		"typescript": "^5.8.3"
+	}
 }

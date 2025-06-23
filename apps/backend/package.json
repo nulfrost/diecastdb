@@ -1,22 +1,22 @@
 {
-  "name": "@hotwheels-api/backend",
-  "scripts": {
-    "dev": "wrangler dev",
-    "dev:remote": "wrangler dev --remote",
-    "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "lint": "oxlint ."
-  },
-  "dependencies": {
-    "@hono-rate-limiter/cloudflare": "^0.2.2",
-    "hono": "^4.7.11",
-    "zod": "^3.25.67"
-  },
-  "devDependencies": {
-    "@hotwheels-api/oxlint-config": "workspace:*",
-    "@hotwheels-api/typescript-config": "workspace:*",
-    "@types/node": "^24.0.0",
-    "typescript": "^5.8.3",
-    "wrangler": "^4.4.0"
-  }
+	"name": "@diecastdb/backend",
+	"scripts": {
+		"dev": "wrangler dev",
+		"dev:remote": "wrangler dev --remote",
+		"deploy": "wrangler deploy --minify",
+		"cf-typegen": "wrangler types --env-interface CloudflareBindings",
+		"lint": "oxlint ."
+	},
+	"dependencies": {
+		"@hono-rate-limiter/cloudflare": "^0.2.2",
+		"hono": "^4.7.11",
+		"zod": "^3.25.67"
+	},
+	"devDependencies": {
+		"@diecastdb/oxlint-config": "workspace:*",
+		"@diecastdb/typescript-config": "workspace:*",
+		"@types/node": "^24.0.0",
+		"typescript": "^5.8.3",
+		"wrangler": "^4.4.0"
+	}
 }

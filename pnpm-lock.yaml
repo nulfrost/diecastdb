@@ -8,10 +8,10 @@ importers:
 
   .:
     devDependencies:
-      '@hotwheels-api/database':
+      '@diecastdb/database':
         specifier: workspace:*
         version: link:packages/database
-      '@hotwheels-api/oxlint-config':
+      '@diecastdb/oxlint-config':
         specifier: workspace:*
         version: link:packages/oxlint-config
       oxlint:
@@ -33,10 +33,10 @@ importers:
         specifier: ^3.25.67
         version: 3.25.67
     devDependencies:
-      '@hotwheels-api/oxlint-config':
+      '@diecastdb/oxlint-config':
         specifier: workspace:*
         version: link:../../packages/oxlint-config
-      '@hotwheels-api/typescript-config':
+      '@diecastdb/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
@@ -61,13 +61,13 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
     devDependencies:
-      '@hotwheels-api/database':
+      '@diecastdb/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@hotwheels-api/oxlint-config':
+      '@diecastdb/oxlint-config':
         specifier: workspace:*
         version: link:../../packages/oxlint-config
-      '@hotwheels-api/typescript-config':
+      '@diecastdb/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/axios':
@@ -95,7 +95,7 @@ importers:
         specifier: ^0.44.2
         version: 0.44.2(@cloudflare/workers-types@4.20250214.0)(@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3))(prisma@6.9.0(typescript@5.8.3))
     devDependencies:
-      '@hotwheels-api/typescript-config':
+      '@diecastdb/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':

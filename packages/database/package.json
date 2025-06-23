@@ -1,23 +1,23 @@
 {
-  "name": "@hotwheels-api/database",
-  "version": "0.0.1",
-  "type": "module",
-  "scripts": {
-    "migrate": "pnpm dlx wrangler d1 migrations create hotwheels-api-db",
-    "remote": "pnpm dlx wrangler d1 migrations apply hotwheels-api-db --remote"
-  },
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "devDependencies": {
-    "@hotwheels-api/typescript-config": "workspace:*",
-    "@types/node": "^24.0.0",
-    "drizzle-kit": "^0.31.1",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.44.2"
-  }
+	"name": "@diecastdb/database",
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"migrate": "drizzle-kit migrate",
+		"push": "drizzle-kit push"
+	},
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"devDependencies": {
+		"@diecastdb/typescript-config": "workspace:*",
+		"@types/node": "^24.0.0",
+		"drizzle-kit": "^0.31.1",
+		"tsx": "^4.19.4",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"dotenv": "^16.5.0",
+		"drizzle-orm": "^0.44.2"
+	}
 }
