@@ -10,13 +10,13 @@ import { cache } from "hono/cache";
 import { cloudflareRateLimiter } from "@hono-rate-limiter/cloudflare";
 
 type App = {
-  Variables: {
-    rateLimit: boolean;
-  };
-  Bindings: {
-    MY_RATE_LIMITER: RateLimit;
-    DB: D1Database;
-  };
+	Variables: {
+		rateLimit: boolean;
+	};
+	Bindings: {
+		MY_RATE_LIMITER: RateLimit;
+		DB: D1Database;
+	};
 };
 
 const app = new Hono<App>();
@@ -27,21 +27,21 @@ hotwheelsApiV1.use(secureHeaders());
 hotwheelsApiV1.use("*", requestId());
 hotwheelsApiV1.use(loggerMiddleware);
 hotwheelsApiV1.use(
-  cloudflareRateLimiter<App>({
-    rateLimitBinding: (c) => c.env.MY_RATE_LIMITER,
-    // Should be using something like API keys or something here
-    keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
-    message: {
-      status: 429,
-      title: "Error: Rate Limit Exceeded",
-      detail:
-        "The rate limit for this resource has been exceeded, please try again in a few minutes.",
-    },
-  }),
+	cloudflareRateLimiter<App>({
+		rateLimitBinding: (c) => c.env.MY_RATE_LIMITER,
+		// Should be using something like API keys or something here
+		keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
+		message: {
+			status: 429,
+			title: "Error: Rate Limit Exceeded",
+			detail:
+				"The rate limit for this resource has been exceeded, please try again in a few minutes.",
+		},
+	}),
 );
 
 app.get("/", (c) => {
-  return c.text(`
+	return c.text(`
   < Hotwheels API >
 
   API Routes: /v1/hotwheels, /v1/hotwheels/{id}, /v1/designers, /v1/designers/{id}
@@ -54,75 +54,92 @@ app.get("/", (c) => {
 });
 
 hotwheelsApiV1.get(
-  "*",
-  cache({
-    cacheName: "hotwheels-api",
-    cacheControl: "public, s-maxage=604800, immutable",
-  }),
+	"*",
+	cache({
+		cacheName: "hotwheels-api",
+		cacheControl: "public, s-maxage=604800, immutable",
+	}),
 );
 
 hotwheelsApiV1.get("/hotwheels", queryParamValidator(), async (c) => {
-  const { limit } = c.req.query();
-  const db = drizzle(c.env.DB, { schema });
-  const results = await db.query.hotwheels.findMany({
-    limit: +limit || DEFAULT_LIMIT,
-  });
+	const { limit } = c.req.query();
+	const db = drizzle(c.env.DB, { schema });
+	const results = await db.query.hotwheels.findMany({
+		limit: +limit || DEFAULT_LIMIT,
+		with: {
+			designers: {
+				columns: {},
+				with: {
+					designer: true,
+				},
+			},
+		},
+	});
 
-  return c.json({ data: results });
+	const flattenedResults = results.map((result) => ({
+		...result,
+		designers: result.designers.map((designer) => designer.designer),
+	}));
+
+	return c.json({ data: flattenedResults });
 });
 
 hotwheelsApiV1.get("/hotwheels/:id", async (c) => {
-  const { id } = c.req.param();
-  const db = drizzle(c.env.DB, { schema });
-  const result = await db.query.hotwheels.findFirst({
-    where: clause.eq(schema.hotwheels.id, +id),
-  });
-  return c.json({ data: result });
+	const { id } = c.req.param();
+	const db = drizzle(c.env.DB, { schema });
+	const result = await db.query.hotwheels.findFirst({
+		where: clause.eq(schema.hotwheels.id, +id),
+		with: {
+			designers: true,
+		},
+	});
+	return c.json({ data: result });
 });
 
 hotwheelsApiV1.get("/designers", queryParamValidator(), async (c) => {
-  const db = drizzle(c.env.DB, { schema });
-  const { limit } = c.req.query();
-  const result = await db.query.designers.findMany({
-    limit: +limit || DEFAULT_LIMIT,
-  });
-  return c.json({ data: result });
+	const db = drizzle(c.env.DB, { schema });
+	const { limit } = c.req.query();
+	const result = await db.query.designers.findMany({
+		limit: +limit || DEFAULT_LIMIT,
+	});
+	return c.json({ data: result });
 });
 
 hotwheelsApiV1.get("/designers/:id", async (c) => {
-  const { id } = c.req.param();
-  const db = drizzle(c.env.DB, { schema });
-  const result = await db.query.designers.findFirst({
-    where: clause.eq(schema.designers.id, +id),
-  });
-  return c.json({ data: result });
+	const { id } = c.req.param();
+	const db = drizzle(c.env.DB, { schema });
+	const result = await db.query.designers.findFirst({
+		where: clause.eq(schema.designers.id, +id),
+	});
+	return c.json({ data: result });
 });
 
 hotwheelsApiV1.get("/healthcheck", (c) => {
-  return c.json({ message: "OK", status: 200 });
+	return c.json({ message: "OK", status: 200 });
 });
 
 hotwheelsApiV1.notFound((c) => {
-  return c.json(
-    {
-      status: 404,
-      title: "Error: Resource could not be found",
-      detail: `The resource requested at ${c.req.path} could not be found.`,
-    },
-    404,
-  );
+	return c.json(
+		{
+			status: 404,
+			title: "Error: Resource could not be found",
+			detail: `The resource requested at ${c.req.path} could not be found.`,
+		},
+		404,
+	);
 });
 
 hotwheelsApiV1.onError((_, c) => {
-  return c.json(
-    {
-      status: 500,
-      title: "Error: Server could not process request",
-      detail:
-        "An error has occurred on the server and could not recover. Please report this error.",
-    },
-    500,
-  );
+	console.log(c.error);
+	return c.json(
+		{
+			status: 500,
+			title: "Error: Server could not process request",
+			detail:
+				"An error has occurred on the server and could not recover. Please report this error.",
+		},
+		500,
+	);
 });
 
 app.route("/", hotwheelsApiV1);
