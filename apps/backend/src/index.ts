@@ -55,12 +55,18 @@ app.get("/", (c) => {
   `);
 });
 
+// Possibly switch to KV for caching
+
 hotwheelsApiV1.get(
 	"*",
 	cache({
 		cacheName: "hotwheels-api",
-		cacheControl: "public, s-maxage=86400",
+		cacheControl: "public, s-maxage=3600",
 	}),
+	// async (c, next) => {
+	// 	c.header("Clear-Site-Data", `"cache"`);
+	// 	await next();
+	// },
 );
 
 hotwheelsApiV1.get("/hotwheels", queryParamValidator(), async (c) => {
