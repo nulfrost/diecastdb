@@ -36,27 +36,13 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🔨 Setup bun
-        uses: oven-sh/setup-bun@v1
+      - name: 🔨 Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+            version: 10
 
       - name: 📥 Install deps
-        run: bun install
+        run: pnpm install
 
       - name: 🔬 Lint
-        run: bun run typecheck
-
-  format:
-    name: ⬣ Format
-    runs-on: ubuntu-latest
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
-
-      - name: 🔨 Setup bun
-        uses: oven-sh/setup-bun@v1
-
-      - name: 📥 Install deps
-        run: bun install
-
-      - name: 🔬 Format
-        run: bun run format
+        run: pnpm typecheck
