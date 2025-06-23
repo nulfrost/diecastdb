@@ -46,6 +46,8 @@ app.get("/", (c) => {
 
   API Routes: /v1/hotwheels, /v1/hotwheels/{id}, /v1/designers, /v1/designers/{id}
 
+  Available query parameters: ?limit=25 | 50 | 100
+
   Requests are limited to 50 API requests every minute
 
   Code: https://github.com/nulfrost/hotwheels-api
