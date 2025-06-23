@@ -42,7 +42,7 @@ hotwheelsApiV1.use(
 
 app.get("/", (c) => {
 	return c.text(`
-  < Hotwheels API >
+  < DiecastDB API >
 
   API Routes: /v1/hotwheels, /v1/hotwheels/{id}, /v1/designers, /v1/designers/{id}
 
@@ -50,7 +50,7 @@ app.get("/", (c) => {
 
   Requests are limited to 50 API requests every minute
 
-  Code: https://github.com/nulfrost/hotwheels-api
+  Code: https://github.com/nulfrost/diecastdb
 
   `);
 });
@@ -98,10 +98,21 @@ hotwheelsApiV1.get("/hotwheels/:id", async (c) => {
 	const result = await db.query.hotwheels.findFirst({
 		where: clause.eq(schema.hotwheels.id, +id),
 		with: {
-			designers: true,
+			designers: {
+				columns: {},
+				with: {
+					designer: true,
+				},
+			},
 		},
 	});
-	return c.json({ data: result });
+
+	const flattenedResults = {
+		...result,
+		designers: result?.designers.map((designer) => designer.designer),
+	};
+
+	return c.json({ data: flattenedResults });
 });
 
 hotwheelsApiV1.get("/designers", queryParamValidator(), async (c) => {
