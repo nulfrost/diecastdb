@@ -1,60 +1,12 @@
-import axios from "axios";
 import * as cheerio from "cheerio";
 import { URL } from "node:url";
-import "dotenv/config";
+import { BASE_URL } from "./constants";
+import { fetchWithRetry, query } from "./utils";
+import type { Designer } from "./types";
 
-const BASE_URL = "https://hotwheels.fandom.com";
+type DesignerWithoutId = Omit<Designer, "id">;
+
 const START_URL = `${BASE_URL}/wiki/Category:Designers`;
-
-const DATABASE_ID = process.env.D1_DATABASE_ID;
-const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
-const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
-const API_BASE = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DATABASE_ID}/query`;
-
-interface Designer {
-	name: string;
-	title: string;
-	description: string | null;
-}
-
-async function runQuery(sql: string, params: any[] = []) {
-	const res = await fetch(API_BASE, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${API_TOKEN}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ sql, params }),
-	});
-
-	const data = await res.json();
-	if (!data.success) {
-		console.error("D1 Error:", data.errors);
-		throw new Error(data.errors.map((e: any) => e.message).join(", "));
-	}
-
-	return data.result;
-}
-
-async function fetchWithRetry(
-	url: string,
-	retries = 3,
-	delay = 1000,
-): Promise<string> {
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		try {
-			const response = await axios.get(url);
-			return response.data;
-		} catch (error: any) {
-			if (attempt === retries) throw error;
-			console.warn(
-				`Retrying (${attempt}/${retries}) after error: ${error.message}`,
-			);
-			await new Promise((res) => setTimeout(res, delay));
-		}
-	}
-	throw new Error("Failed to fetch after retries");
-}
 
 async function getDesignerLinks(startUrl: string): Promise<string[]> {
 	const html = await fetchWithRetry(startUrl);
@@ -72,7 +24,9 @@ async function getDesignerLinks(startUrl: string): Promise<string[]> {
 	return links;
 }
 
-async function scrapeDesignerDetailPage(url: string): Promise<Designer> {
+async function scrapeDesignerDetailPage(
+	url: string,
+): Promise<DesignerWithoutId> {
 	const html = await fetchWithRetry(url);
 	const $ = cheerio.load(html);
 
@@ -104,24 +58,26 @@ async function scrapeDesignerDetailPage(url: string): Promise<Designer> {
 
 (async () => {
 	try {
-		await runQuery("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='designers'");
-		await runQuery("DELETE FROM designers;");
+		await query("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='designers'");
+		await query("DELETE FROM designers;");
 		const links = await getDesignerLinks(START_URL);
-		const designers: Designer[] = [];
+		const designers: DesignerWithoutId[] = [];
 
 		for (const link of links) {
 			console.log(`Scraping designer: ${link}`);
 			try {
 				const designer = await scrapeDesignerDetailPage(link);
 				designers.push(designer);
-				await runQuery(
+				await query(
 					"INSERT INTO designers (name, title, description) VALUES (?, ?, ?)",
 					[designer.name, designer.title, designer.description ?? null],
 				);
 
 				console.log(`Inserted designer: ${designer.name}`);
-			} catch (err: any) {
-				console.warn(`Failed to fetch designer from ${link}: ${err.message}`);
+			} catch (err) {
+				if (err instanceof Error) {
+					console.warn(`Failed to fetch designer from ${link}: ${err.message}`);
+				}
 			}
 		}
 

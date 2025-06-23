@@ -1,76 +1,20 @@
-// Enhanced scraper to follow car detail links and extract full data
-
-import axios from "axios";
 import * as cheerio from "cheerio";
 import { URL } from "node:url";
 import "dotenv/config";
+import { BASE_URL } from "./constants";
+import { fetchWithRetry, query } from "./utils";
+import type { YearLink, Car, Designer } from "./types";
 
-const BASE_URL = "https://hotwheels.fandom.com";
 const START_URL = `${BASE_URL}/wiki/Hot_Wheels`;
-const DATABASE_ID = process.env.D1_DATABASE_ID;
-const ACCOUNT_ID = process.env.CLOUDFLARE_ACCOUNT_ID;
-const API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
-const API_BASE = `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/d1/database/${DATABASE_ID}/query`;
+
+type CarWithoutId = Omit<Car, "id">;
 
 const EXCLUDED_DESIGNER_WORDS: string[] = ["Retool"]; // Add more words to exclude here
-
-interface YearLink {
-	year: number;
-	url: string;
-}
-
-interface Car {
-	name: string;
-	image_url: string | null;
-	year: string | null;
-	series: string | null;
-	designers: string[];
-	model_number: string | null;
-}
-
-async function runQuery(sql: string, params: any[] = []) {
-	const res = await fetch(API_BASE, {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${API_TOKEN}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ sql, params }),
-	});
-
-	const data = await res.json();
-	if (!data.success) {
-		console.error("D1 Error:", data.errors);
-		throw new Error(data.errors.map((e: any) => e.message).join(", "));
-	}
-
-	return data.result;
-}
 
 function filterExcludedWords(name: string, excludedWords: string[]): boolean {
 	return excludedWords.every(
 		(word) => !name.toLowerCase().includes(word.toLowerCase()),
 	);
-}
-
-async function fetchWithRetry(
-	url: string,
-	retries = 3,
-	delay = 1000,
-): Promise<any> {
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		try {
-			return await axios.get(url);
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				if (attempt === retries) throw error;
-				console.warn(
-					`Retrying (${attempt}/${retries}) after error: ${error.message}`,
-				);
-				await new Promise((res) => setTimeout(res, delay));
-			}
-		}
-	}
 }
 
 async function getYearLinks(url: string): Promise<YearLink[]> {
@@ -101,7 +45,7 @@ async function getYearLinks(url: string): Promise<YearLink[]> {
 		.sort((a, b) => a.year - b.year);
 }
 
-async function scrapeCarDetailPage(url: string): Promise<Car> {
+async function scrapeCarDetailPage(url: string): Promise<CarWithoutId> {
 	const { data } = await fetchWithRetry(url);
 	const $ = cheerio.load(data);
 	const infobox = $(".portable-infobox");
@@ -120,7 +64,7 @@ async function scrapeCarDetailPage(url: string): Promise<Car> {
 		}
 	});
 
-	const fields: Car = {
+	const fields: CarWithoutId = {
 		name,
 		image_url,
 		year: producedYear,
@@ -151,10 +95,13 @@ async function scrapeCarDetailPage(url: string): Promise<Car> {
 	return fields;
 }
 
-async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
+async function scrapeHotWheelsList(
+	year: number,
+	url: string,
+): Promise<CarWithoutId[]> {
 	const { data } = await fetchWithRetry(url);
 	const $ = cheerio.load(data);
-	const cars: Car[] = [];
+	const cars: Omit<Car, "id">[] = [];
 
 	const detailLinks: string[] = [];
 
@@ -183,9 +130,9 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
 
 (async () => {
 	try {
-		await runQuery("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='hotwheels'");
-		await runQuery("DELETE FROM hotwheel_designers;");
-		await runQuery("DELETE FROM hotwheels;");
+		await query("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='hotwheels'");
+		await query("DELETE FROM hotwheel_designers;");
+		await query("DELETE FROM hotwheels;");
 
 		// const designers = await prisma.designer.findMany();
 		// if (designers.length === 0) {
@@ -195,7 +142,7 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
 		// }
 
 		const yearLinks = await getYearLinks(START_URL);
-		const allCars: Car[] = [];
+		const allCars: CarWithoutId[] = [];
 
 		for (const { year, url } of yearLinks) {
 			console.log(`Scraping ${year} from ${url}`);
@@ -204,7 +151,7 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
 		}
 		for (const car of allCars) {
 			try {
-				const insertHW = await runQuery(
+				const insertHW = await query<Car>(
 					"INSERT INTO hotwheels (name, image_url, year, series, model_number) VALUES (?, ?, ?, ?, ?) RETURNING id",
 					[
 						car.name,
@@ -215,25 +162,25 @@ async function scrapeHotWheelsList(year: number, url: string): Promise<Car[]> {
 					],
 				);
 
-				const hotwheelId = insertHW[0].results[0].id;
+				const hotwheelId = insertHW?.[0]?.results?.[0]?.id;
 
 				for (const name of car.designers) {
 					const trimmedDesignerName = name.trim();
 
-					const designerRows = await runQuery(
+					const designerRows = await query<Designer>(
 						"SELECT id FROM designers WHERE name = ? LIMIT 1",
 						[trimmedDesignerName],
 					);
 
 					// should figure out what to actually put here, doesn't stop the script if not found anyways
-					if (designerRows === 0) {
+					if (designerRows.length === 0) {
 						console.warn(`Designer not found in DB: ${name}`);
 						continue;
 					}
 
-					const designerId = designerRows[0].results[0].id;
+					const designerId = designerRows?.[0]?.results?.[0]?.id;
 
-					await runQuery(
+					await query(
 						"INSERT OR IGNORE INTO hotwheel_designers (hotwheel_id, designer_id) VALUES (?, ?)",
 						[hotwheelId, designerId],
 					);

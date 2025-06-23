@@ -10,7 +10,8 @@
 		"scrape:designers": "pnpm --filter scraper scrape-designers",
 		"lint": "pnpm --filter={./apps/*} lint",
 		"db:push": "pnpm --filter database push",
-		"deploy": "pnpm --filter backend cf-deploy"
+		"deploy": "pnpm run --filter backend deploy",
+		"typecheck": "tsc"
 	},
 	"keywords": ["hotwheels", "api", "typescript"],
 	"author": "Dane Miller <khadane.miller@gmail.com>",
