@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { drizzle, schema, clause } from "@hotwheels-api/database";
+import { drizzle, schema, clause } from "@diecastdb/database";
 import { DEFAULT_LIMIT } from "./constants";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";

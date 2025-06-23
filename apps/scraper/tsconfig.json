@@ -1,4 +1,4 @@
 {
-  "extends": "@hotwheels-api/typescript-config/scraper.json",
-  "exclude": ["node_modules"]
+	"extends": "@diecastdb/typescript-config/scraper.json",
+	"exclude": ["node_modules"]
 }
