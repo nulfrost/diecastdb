@@ -23,15 +23,9 @@ importers:
 
   apps/backend:
     dependencies:
-      '@hono/zod-validator':
-        specifier: ^0.7.0
-        version: 0.7.0(hono@4.7.11)(zod@3.25.67)
-      '@prisma/adapter-d1':
-        specifier: ^6.9.0
-        version: 6.9.0
-      '@prisma/client':
-        specifier: ^6.9.0
-        version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
+      '@hono-rate-limiter/cloudflare':
+        specifier: ^0.2.2
+        version: 0.2.2(@cloudflare/workers-types@4.20250214.0)(hono@4.7.11)
       hono:
         specifier: ^4.7.11
         version: 4.7.11
@@ -53,7 +47,7 @@ importers:
         version: 5.8.3
       wrangler:
         specifier: ^4.4.0
-        version: 4.19.1
+        version: 4.19.1(@cloudflare/workers-types@4.20250214.0)
 
   apps/scraper:
     dependencies:
@@ -474,11 +468,11 @@ packages:
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
 
-  '@hono/zod-validator@0.7.0':
-    resolution: {integrity: sha512-qe2ZE6sHFE98dcUrbYMtS3bAV8hqcCOflykvZga2S7XhmNSZzT+dIz4OuMILsjLHkJw9JMn912/dB7dQOmuPvg==}
+  '@hono-rate-limiter/cloudflare@0.2.2':
+    resolution: {integrity: sha512-wMnqeV+cb5Wov2npLIMFtCVm3tiNMtqw9LhPWSzSMwHOzh2qbhI3mCS6s962fxcJ6UUNJhRqDbVMEsB/NinCIQ==}
     peerDependencies:
-      hono: '>=3.9.0'
-      zod: ^3.25.0
+      '@cloudflare/workers-types': ^4.20240529.0
+      hono: ^4.4.8
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -635,9 +629,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@prisma/adapter-d1@6.9.0':
-    resolution: {integrity: sha512-50l97aZLzxOEaHsvFlGWgZ1OyOXQqUBmZgjqRS7JBRnplX1wjbkf8pCXxF+cu5arAeMUo97QVh2XaNnlo/vKpg==}
-
   '@prisma/client@6.9.0':
     resolution: {integrity: sha512-Gg7j1hwy3SgF1KHrh0PZsYvAaykeR0PaxusnLXydehS96voYCGt1U5zVR31NIouYc63hWzidcrir1a7AIyCsNQ==}
     engines: {node: '>=18.18'}
@@ -655,9 +646,6 @@ packages:
 
   '@prisma/debug@6.9.0':
     resolution: {integrity: sha512-bFeur/qi/Q+Mqk4JdQ3R38upSYPebv5aOyD1RKywVD+rAMLtRkmTFn28ZuTtVOnZHEdtxnNOCH+bPIeSGz1+Fg==}
-
-  '@prisma/driver-adapter-utils@6.9.0':
-    resolution: {integrity: sha512-HtugVGw5y50drVTboKubHJeOmoUQfDZa8vJBhzgR+iZ8KfUsJuTIU20rNd7Hi/S+JdLJGJXIxzbXiQABMNArjw==}
 
   '@prisma/engines-version@6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e':
     resolution: {integrity: sha512-Qp9gMoBHgqhKlrvumZWujmuD7q4DV/gooEyPCLtbkc13EZdSz2RsGUJ5mHb3RJgAbk+dm6XenqG7obJEhXcJ6Q==}
@@ -1009,10 +997,6 @@ packages:
   jiti@2.4.2:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
-
-  ky@1.7.5:
-    resolution: {integrity: sha512-HzhziW6sc5m0pwi5M196+7cEBtbt0lCYi67wNsiwMUmz833wloE0gbzJPWKs1gliFKQb34huItDQX97LyOdPdA==}
-    engines: {node: '>=18'}
 
   math-intrinsics@1.1.0:
     resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
@@ -1384,10 +1368,10 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@hono/zod-validator@0.7.0(hono@4.7.11)(zod@3.25.67)':
+  '@hono-rate-limiter/cloudflare@0.2.2(@cloudflare/workers-types@4.20250214.0)(hono@4.7.11)':
     dependencies:
+      '@cloudflare/workers-types': 4.20250214.0
       hono: 4.7.11
-      zod: 3.25.67
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
@@ -1497,27 +1481,19 @@ snapshots:
   '@oxlint/win32-x64@1.0.0':
     optional: true
 
-  '@prisma/adapter-d1@6.9.0':
-    dependencies:
-      '@cloudflare/workers-types': 4.20250214.0
-      '@prisma/driver-adapter-utils': 6.9.0
-      ky: 1.7.5
-
   '@prisma/client@6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)':
     optionalDependencies:
       prisma: 6.9.0(typescript@5.8.3)
       typescript: 5.8.3
+    optional: true
 
   '@prisma/config@6.9.0':
     dependencies:
       jiti: 2.4.2
     optional: true
 
-  '@prisma/debug@6.9.0': {}
-
-  '@prisma/driver-adapter-utils@6.9.0':
-    dependencies:
-      '@prisma/debug': 6.9.0
+  '@prisma/debug@6.9.0':
+    optional: true
 
   '@prisma/engines-version@6.9.0-10.81e4af48011447c3cc503a190e86995b66d2a28e':
     optional: true
@@ -1855,8 +1831,6 @@ snapshots:
   jiti@2.4.2:
     optional: true
 
-  ky@1.7.5: {}
-
   math-intrinsics@1.1.0: {}
 
   mime-db@1.52.0: {}
@@ -2029,7 +2003,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20250525.0
       '@cloudflare/workerd-windows-64': 1.20250525.0
 
-  wrangler@4.19.1:
+  wrangler@4.19.1(@cloudflare/workers-types@4.20250214.0):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.4.0
       '@cloudflare/unenv-preset': 2.3.2(unenv@2.0.0-rc.17)(workerd@1.20250525.0)
@@ -2040,6 +2014,7 @@ snapshots:
       unenv: 2.0.0-rc.17
       workerd: 1.20250525.0
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20250214.0
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

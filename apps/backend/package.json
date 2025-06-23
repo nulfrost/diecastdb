@@ -1,15 +1,14 @@
 {
   "name": "@hotwheels-api/backend",
   "scripts": {
-    "dev": "wrangler dev --remote",
+    "dev": "wrangler dev",
+    "dev:remote": "wrangler dev --remote",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "lint": "oxlint ."
   },
   "dependencies": {
-    "@hono/zod-validator": "^0.7.0",
-    "@prisma/adapter-d1": "^6.9.0",
-    "@prisma/client": "^6.9.0",
+    "@hono-rate-limiter/cloudflare": "^0.2.2",
     "hono": "^4.7.11",
     "zod": "^3.25.67"
   },

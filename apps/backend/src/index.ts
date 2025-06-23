@@ -7,38 +7,61 @@ import { queryParamValidator } from "./validator";
 import { loggerMiddleware } from "./middleware";
 import { requestId } from "hono/request-id";
 import { cache } from "hono/cache";
+import { cloudflareRateLimiter } from "@hono-rate-limiter/cloudflare";
 
-type Bindings = {
-  DB: D1Database;
+type App = {
+  Variables: {
+    rateLimit: boolean;
+  };
+  Bindings: {
+    MY_RATE_LIMITER: RateLimit;
+    DB: D1Database;
+  };
 };
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<App>();
+const hotwheelsApiV1 = new Hono<App>().basePath("/v1");
 
-app.use(cors({ origin: "*", allowMethods: ["GET", "OPTIONS"] }));
-app.use(secureHeaders());
-app.use("*", requestId());
-app.use(loggerMiddleware);
+hotwheelsApiV1.use(cors({ origin: "*", allowMethods: ["GET", "OPTIONS"] }));
+hotwheelsApiV1.use(secureHeaders());
+hotwheelsApiV1.use("*", requestId());
+hotwheelsApiV1.use(loggerMiddleware);
+hotwheelsApiV1.use(
+  cloudflareRateLimiter<App>({
+    rateLimitBinding: (c) => c.env.MY_RATE_LIMITER,
+    // Should be using something like API keys or something here
+    keyGenerator: (c) => c.req.header("cf-connecting-ip") ?? "",
+    message: {
+      status: 429,
+      title: "Error: Rate Limit Exceeded",
+      detail:
+        "The rate limit for this resource has been exceeded, please try again in a few minutes.",
+    },
+  }),
+);
 
 app.get("/", (c) => {
   return c.text(`
   < Hotwheels API >
 
-  API Routes: /hotwheels, /hotwheels/{id}, /designers, /designers/{id}
+  API Routes: /v1/hotwheels, /v1/hotwheels/{id}, /v1/designers, /v1/designers/{id}
+
+  Requests are limited to 50 API requests every minute
 
   Code: https://github.com/nulfrost/hotwheels-api
 
   `);
 });
 
-app.get(
+hotwheelsApiV1.get(
   "*",
   cache({
     cacheName: "hotwheels-api",
-    cacheControl: "public, s-maxage=60",
+    cacheControl: "public, s-maxage=604800, immutable",
   }),
 );
 
-app.get("/hotwheels", queryParamValidator(), async (c) => {
+hotwheelsApiV1.get("/hotwheels", queryParamValidator(), async (c) => {
   const { limit } = c.req.query();
   const db = drizzle(c.env.DB, { schema });
   const results = await db.query.hotwheels.findMany({
@@ -48,7 +71,7 @@ app.get("/hotwheels", queryParamValidator(), async (c) => {
   return c.json({ data: results });
 });
 
-app.get("/hotwheels/:id", async (c) => {
+hotwheelsApiV1.get("/hotwheels/:id", async (c) => {
   const { id } = c.req.param();
   const db = drizzle(c.env.DB, { schema });
   const result = await db.query.hotwheels.findFirst({
@@ -57,7 +80,7 @@ app.get("/hotwheels/:id", async (c) => {
   return c.json({ data: result });
 });
 
-app.get("/designers", queryParamValidator(), async (c) => {
+hotwheelsApiV1.get("/designers", queryParamValidator(), async (c) => {
   const db = drizzle(c.env.DB, { schema });
   const { limit } = c.req.query();
   const result = await db.query.designers.findMany({
@@ -66,7 +89,7 @@ app.get("/designers", queryParamValidator(), async (c) => {
   return c.json({ data: result });
 });
 
-app.get("/designers/:id", async (c) => {
+hotwheelsApiV1.get("/designers/:id", async (c) => {
   const { id } = c.req.param();
   const db = drizzle(c.env.DB, { schema });
   const result = await db.query.designers.findFirst({
@@ -75,11 +98,11 @@ app.get("/designers/:id", async (c) => {
   return c.json({ data: result });
 });
 
-app.get("/healthcheck", (c) => {
+hotwheelsApiV1.get("/healthcheck", (c) => {
   return c.json({ message: "OK", status: 200 });
 });
 
-app.notFound((c) => {
+hotwheelsApiV1.notFound((c) => {
   return c.json(
     {
       status: 404,
@@ -90,7 +113,7 @@ app.notFound((c) => {
   );
 });
 
-app.onError((_, c) => {
+hotwheelsApiV1.onError((_, c) => {
   return c.json(
     {
       status: 500,
@@ -101,4 +124,7 @@ app.onError((_, c) => {
     500,
   );
 });
+
+app.route("/", hotwheelsApiV1);
+
 export default app;

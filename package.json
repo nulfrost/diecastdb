@@ -12,11 +12,7 @@
     "scrape:hotwheels": "pnpm --filter scraper scrape-hotwheels",
     "scrape:designers": "pnpm --filter scraper scrape-designers",
     "lint": "pnpm --filter={./apps/*} lint",
-    "db:generate": "pnpm --filter database generate",
-    "db:migrate": "pnpm --filter database migrate",
-    "db:push": "pnpm --filter database push",
-    "db:push-remote": "pnpm --filter database remote",
-    "db:studio": "pnpm --filter database studio"
+    "db:push-remote": "pnpm --filter database remote"
   },
   "keywords": [
     "hotwheels",
