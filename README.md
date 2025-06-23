@@ -10,13 +10,13 @@ I've been wanting to make something like this for a while. Mostly to do more bac
 
 ### Hotwheels
 
-[/v1/hotwheels](https://diecastdb.dev/v1/hotwheels)
-[/v1/hotwheels/:id](https://diecastdb.dev/v1/hotwheels/1)
+- [/v1/hotwheels](https://diecastdb.dev/v1/hotwheels)
+- [/v1/hotwheels/:id](https://diecastdb.dev/v1/hotwheels/1)
 
 ### Designers
 
-[/v1/designers](https://diecastdb.dev/v1/designers)
-[/v1/designers/:id](https://diecastdb.dev/v1/designers/1)
+- [/v1/designers](https://diecastdb.dev/v1/designers)
+- [/v1/designers/:id](https://diecastdb.dev/v1/designers/1)
 
 ## Local Development
 
