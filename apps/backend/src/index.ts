@@ -57,7 +57,7 @@ hotwheelsApiV1.get(
 	"*",
 	cache({
 		cacheName: "hotwheels-api",
-		cacheControl: "public, s-maxage=604800, immutable",
+		cacheControl: "public, s-maxage=86400",
 	}),
 );
 
