@@ -12,11 +12,19 @@ jobs:
   lint:
     name: ⬣ Lint
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22.16.0']
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: 🔨 Install PNPM
         uses: pnpm/action-setup@v4
@@ -32,9 +40,17 @@ jobs:
   typecheck:
     name: ⬣ Typecheck
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22.16.0']
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
 
       - name: 🔨 Install PNPM
         uses: pnpm/action-setup@v4
@@ -46,3 +62,32 @@ jobs:
 
       - name: 🔬 Lint
         run: pnpm typecheck
+
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22.16.0']
+    name: Deploy
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: 🔨 Install PNPM
+        uses: pnpm/action-setup@v4
+        with:
+            version: 10.12.1
+
+      - name: 📥 Install deps
+        run: pnpm install
+
+      - name: 🏎️ Deploy
+        run: pnpm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
