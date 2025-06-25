@@ -46,7 +46,7 @@ app.get("/", (c) => {
 
   API Routes: /v1/hotwheels, /v1/hotwheels/{id}, /v1/designers, /v1/designers/{id}
 
-  Available query parameters: ?limit=25 | 50 | 100
+  Available query parameters: ?limit=25 | 50 | 100, ?sort=asc | desc
 
   Requests are limited to 50 API requests every minute
 
