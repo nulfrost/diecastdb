@@ -70,10 +70,15 @@ hotwheelsApiV1.get(
 );
 
 hotwheelsApiV1.get("/hotwheels", queryParamValidator(), async (c) => {
-	const { limit } = c.req.query();
+	const { limit, sort } = c.req.query();
 	const db = drizzle(c.env.DB, { schema });
 	const results = await db.query.hotwheels.findMany({
 		limit: +limit || DEFAULT_LIMIT,
+		orderBy: [
+			sort === "desc"
+				? clause.desc(schema.hotwheels.id)
+				: clause.asc(schema.hotwheels.id),
+		],
 		with: {
 			designers: {
 				columns: {},
@@ -117,8 +122,13 @@ hotwheelsApiV1.get("/hotwheels/:id", async (c) => {
 
 hotwheelsApiV1.get("/designers", queryParamValidator(), async (c) => {
 	const db = drizzle(c.env.DB, { schema });
-	const { limit } = c.req.query();
+	const { limit, sort } = c.req.query();
 	const result = await db.query.designers.findMany({
+		orderBy: [
+			sort === "desc"
+				? clause.desc(schema.hotwheels.id)
+				: clause.asc(schema.hotwheels.id),
+		],
 		limit: +limit || DEFAULT_LIMIT,
 	});
 	return c.json({ data: result });
