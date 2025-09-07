@@ -3,7 +3,10 @@
 	"private": true,
 	"version": "1.0.0",
 	"type": "module",
-	"workspaces": ["packages/*", "apps/*"],
+	"workspaces": [
+		"packages/*",
+		"apps/*"
+	],
 	"scripts": {
 		"dev:api": "pnpm --filter backend dev",
 		"scrape:hotwheels": "pnpm --filter scraper scrape-hotwheels",
@@ -13,17 +16,21 @@
 		"deploy": "pnpm run --filter backend deploy",
 		"typecheck": "tsc"
 	},
-	"keywords": ["hotwheels", "api", "typescript"],
+	"keywords": [
+		"hotwheels",
+		"api",
+		"typescript"
+	],
 	"author": "Dane Miller <khadane.miller@gmail.com>",
 	"license": "MIT",
 	"description": "Public API for scraped data from the hotwheels wiki.",
-	"packageManager": "pnpm@10.12.1",
+	"packageManager": "pnpm@10.12.4",
 	"engines": {
 		"node": ">=22.16.0"
 	},
 	"devDependencies": {
-		"@diecastdb/oxlint-config": "workspace:*",
 		"@diecastdb/database": "workspace:*",
+		"@diecastdb/oxlint-config": "workspace:*",
 		"oxlint": "^1.0.0",
 		"typescript": "^5.8.3"
 	}
